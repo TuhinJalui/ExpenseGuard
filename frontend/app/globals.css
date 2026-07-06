@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Google Fonts ──────────────────────────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+/* ── CSS Custom Properties — Light theme ─────────────────────────────── */
+:root {
+  --surface:          #ffffff;
+  --surface-raised:   #f8fafc;
+  --surface-overlay:  #f1f5f9;
+  --surface-sunken:   #e2e8f0;
+
+  --border:           #e2e8f0;
+  --border-subtle:    #f1f5f9;
+  --border-strong:    #cbd5e1;
+
+  --text-primary:     #0f172a;
+  --text-secondary:   #475569;
+  --text-muted:       #94a3b8;
+  --text-inverse:     #ffffff;
+
+  --bg-page:          #f8fafc;
+  --bg-hero:          linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+
+  /* Agent accent colors */
+  --agent-pii:        #10b981;
+  --agent-intake:     #3b82f6;
+  --agent-policy:     #a855f7;
+  --agent-router:     #6366f1;
+
+  /* Semantic status */
+  --status-approved:  #16a34a;
+  --status-escalated: #d97706;
+  --status-rejected:  #dc2626;
+}
+
+/* ── CSS Custom Properties — Dark theme ──────────────────────────────── */
+.dark {
+  --surface:          #1e2433;
+  --surface-raised:   #252d3d;
+  --surface-overlay:  #2d3748;
+  --surface-sunken:   #161b28;
+
+  --border:           #2d3748;
+  --border-subtle:    #252d3d;
+  --border-strong:    #374151;
+
+  --text-primary:     #f1f5f9;
+  --text-secondary:   #94a3b8;
+  --text-muted:       #475569;
+  --text-inverse:     #0f172a;
+
+  --bg-page:          #161b28;
+  --bg-hero:          linear-gradient(135deg, #0a0f1e 0%, #0f0a2e 50%, #0a0f1e 100%);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ── Custom scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ── Monospace font for code/JSON ─────────────────────────────────────── */
+pre, code, kbd, samp {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+/* ── Utility: glass card ──────────────────────────────────────────────── */
+@layer components {
+  .glass {
+    @apply backdrop-blur-xl bg-white/70 dark:bg-white/5 border border-white/20 dark:border-white/10;
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-xl bg-black/20 border border-white/10;
+  }
+
+  /* Card surface */
+  .card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    @apply rounded-2xl shadow-card transition-shadow duration-200;
+  }
+
+  .card:hover {
+    @apply shadow-card-md;
+  }
+
+  /* Input field */
+  .field {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    @apply rounded-lg px-3 py-2 text-sm transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500;
+  }
+
+  .field::placeholder {
+    color: var(--text-muted);
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border;
+  }
+
+  /* Shimmer skeleton */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--surface-overlay) 25%,
+      var(--surface-raised) 50%,
+      var(--surface-overlay) 75%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-lg;
+  }
+}
+
+/* ── Selection ────────────────────────────────────────────────────────── */
+::selection {
+  background-color: rgb(59 130 246 / 0.2);
+  color: var(--text-primary);
+}
+
+/* ── Focus visible ────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid rgb(59 130 246 / 0.6);
+  outline-offset: 2px;
+}
+
+/* ── JSON syntax highlight ────────────────────────────────────────────── */
+.json-string  { color: #16a34a; }
+.json-number  { color: #2563eb; }
+.json-boolean { color: #d97706; }
+.json-null    { color: #94a3b8; }
+.json-key     { color: #7c3aed; }
+
+.dark .json-string  { color: #4ade80; }
+.dark .json-number  { color: #60a5fa; }
+.dark .json-boolean { color: #fbbf24; }
+.dark .json-null    { color: #6b7280; }
+.dark .json-key     { color: #c084fc; }
+
+/* ── Status glow effects ──────────────────────────────────────────────── */
+.status-approved  { box-shadow: 0 0 0 1px rgb(22 163 74 / 0.2), 0 2px 8px rgb(22 163 74 / 0.1); }
+.status-escalated { box-shadow: 0 0 0 1px rgb(217 119 6 / 0.2), 0 2px 8px rgb(217 119 6 / 0.1); }
+.status-rejected  { box-shadow: 0 0 0 1px rgb(220 38 38 / 0.2), 0 2px 8px rgb(220 38 38 / 0.1); }
+
+/* ── Page transitions ─────────────────────────────────────────────────── */
+.page-enter {
+  animation: fadeIn 0.25s ease-out;
+}
+
+/* ── Mobile menu ──────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .mobile-hidden { display: none; }
+}

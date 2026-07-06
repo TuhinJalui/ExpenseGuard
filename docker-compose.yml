@@ -1,0 +1,56 @@
+version: "3.9"
+
+# ExpenseGuard — Single-command deployment
+# Usage: docker-compose up --build
+#
+# This starts:
+#   - expenseguard-api: FastAPI backend (port 8000)
+#   - expenseguard-frontend: Next.js UI (port 3000)
+#
+# Requirements:
+#   - Docker Desktop installed
+#   - .env file with GOOGLE_API_KEY (copy from .env.example)
+
+services:
+
+  # ── Backend API + Agent Pipeline ──────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: expenseguard-api
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    volumes:
+      # Persist audit log and MCP database between restarts
+      - expenseguard_data:/app/data
+      - expenseguard_mcp_db:/app/mcp_server
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ── Frontend (Next.js) ────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: expenseguard-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  expenseguard_data:
+  expenseguard_mcp_db:
