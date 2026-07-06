@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: expenseguard-api
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt && python -c "from mcp_server.seed_data import seed; seed()"
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false           # You paste this manually in Render dashboard
+      - key: FRONTEND_URL
+        sync: false           # Paste your Vercel URL here after deploying frontend
+    healthCheckPath: /api/health

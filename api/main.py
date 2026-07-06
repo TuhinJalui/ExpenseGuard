@@ -33,9 +33,22 @@ app = FastAPI(
     version="2.0.0",
 )
 
+_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    # Vercel deployments
+    "https://expense-guard.vercel.app",
+    "https://expenseguard.vercel.app",
+]
+# Also allow any custom FRONTEND_URL from env (set this on Render/Vercel)
+_frontend_url = os.getenv("FRONTEND_URL")
+if _frontend_url:
+    _ALLOWED_ORIGINS.append(_frontend_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "*"],
+    allow_origins=_ALLOWED_ORIGINS,
+    allow_origin_regex=r"https://.*\.vercel\.app",   # all Vercel preview URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
